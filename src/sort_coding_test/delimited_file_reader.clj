@@ -8,6 +8,8 @@
    "comma" ", "
    "space" " "})
 
+
+
 ;; (with-open [reader (io/reader "in-file.csv")]
 ;;   (doall
 ;;     (csv/read-csv reader)))
