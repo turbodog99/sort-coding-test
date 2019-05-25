@@ -9,10 +9,10 @@
 
 ;;;; For our purposes, a person in vector form will look like:
 
-;;;; [[last-name] [first-name] [gender] [favorite-color] [date-of-birth]]
+;;;; ["last-name" "first-name" "gender" "favorite-color" "date-of-birth"]
 
 ;;;; where all values are strings. Dates are strings of the form M/D/YYYY.
-;;;; Gender is a single lowercase string.
+;;;; Gender is a single lowercase string. Any missing value should be an empty string.
 
 
 ;;;; A person in map form will look as follows:
@@ -25,6 +25,8 @@
 ;;;;  date-of-birth: java.util.Date
 ;;;;  }
 
+;;;; Any missing value should be nil
+
 (def default-date-format-string
   "M/d/YYYY")
 
@@ -36,7 +38,6 @@
   [date]
   (.format default-date-formatter date))
 
-;; TODO: make gender and date nil if not specified
 (defn vector->map
   [[last-name first-name gender favorite-color date-of-birth]]
   {
@@ -47,7 +48,6 @@
    :date-of-birth (when (seq date-of-birth) (java.util.Date. date-of-birth))
    })
 
-;; TODO: handle nil gender and date
 (defn map->vector
   [{:keys [last-name first-name gender favorite-color date-of-birth]}]
   [last-name
