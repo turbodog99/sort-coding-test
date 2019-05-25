@@ -18,7 +18,7 @@
 
 ;; NOTE: unordered means they're not sorted; not that they can be moved around without
 ;; breaking tests.
-(def unordered-people-map
+(def unordered-people-maps
   "Unordered people strings converted to maps with proper data types"
   [{:last-name "Herman",
   :first-name "Mark",

@@ -4,12 +4,12 @@
             [sort-coding-test.test-data :as test-data]))
 
 (deftest vector->map-test
-  (is (= test-data/unordered-people-map
+  (is (= test-data/unordered-people-maps
          (map vector->map test-data/unordered-people-vectors))))
 
 (deftest map->vector-test
   (is (= test-data/unordered-people-vectors
-         (map map->vector test-data/unordered-people-map))))
+         (map map->vector test-data/unordered-people-maps))))
 
 (def test-last-name "last_name")
 (def test-first-name "first_name")
