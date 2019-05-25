@@ -1,4 +1,5 @@
-(ns sort-coding-test.data-types.people)
+(ns sort-coding-test.data-types.people
+  (:require [sort-coding-test.sorting :as sorting]))
 ;;;; Defines functions for working with people data.
 
 ;;;; I avoided using plumatic/schema for simplicity but would consider it in a more
@@ -55,3 +56,34 @@
    (if gender (clojure.string/upper-case (name gender)) "")
    favorite-color
    (if date-of-birth (date->formatted-string date-of-birth) "")])
+
+;;; Common sorts
+(defn sort-by-gender-asc-last-name-asc
+  [people-maps]
+  (sorting/sort-maps-by-keys-and-directions
+   people-maps
+   [[:gender :asc] [:last-name :asc]]))
+
+(defn sort-by-date-of-birth-asc
+  [people-maps]
+  (sorting/sort-maps-by-keys-and-directions
+   people-maps
+   [[:date-of-birth :asc]]))
+
+(defn sort-by-last-name-desc
+  [people-maps]
+  (sorting/sort-maps-by-keys-and-directions
+   people-maps
+   [[:last-name :desc]]))
+
+(defn sort-by-gender-asc
+  [people-maps]
+  (sorting/sort-maps-by-keys-and-directions
+   people-maps
+   [[:gender :asc]]))
+
+(defn sort-by-name-asc
+  [people-maps]
+  (sorting/sort-maps-by-keys-and-directions
+   people-maps
+   [[:first-name :asc] [:last-name :asc]]))

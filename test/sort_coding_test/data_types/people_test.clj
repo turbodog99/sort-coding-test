@@ -1,7 +1,8 @@
 (ns sort-coding-test.data-types.people-test
   (:require [clojure.test :refer :all]
             [sort-coding-test.data-types.people :refer :all]
-            [sort-coding-test.test-data :as test-data]))
+            [sort-coding-test.test-data :as test-data]
+            [sort-coding-test.sorting :as sorting]))
 
 (deftest vector->map-test
   (is (= test-data/unordered-people-maps
@@ -78,3 +79,27 @@
     (is (= test-empty-string-field-vector
            (map->vector test-empty-string-field-map))
         "map->vector conversion")))
+
+;; This does the same thing as the existing sorting tests, but they're here to verify the
+;; shortcuts all do what they claim. The shortcuts are to keep me from having to go back
+;; and figure out the input vectors while developing the CLI and server.
+(deftest sorting-shortcuts-test
+  (is (= (map vector->map test-data/people-vectors-gender-asc-last-name-asc)
+         (sort-by-gender-asc-last-name-asc test-data/unordered-people-maps))
+      "gender-asc-last-name-asc")
+
+  (is (= (map vector->map test-data/people-vectors-date-of-birth-asc)
+         (sort-by-date-of-birth-asc test-data/unordered-people-maps))
+      "date-of-birth-asc")
+
+  (is (= (map vector->map test-data/people-vectors-last-name-desc)
+         (sort-by-last-name-desc test-data/unordered-people-maps))
+      "last-name-desc")
+
+  (is (= (map vector->map test-data/people-vectors-gender-asc)
+         (sort-by-gender-asc test-data/unordered-people-maps))
+      "gender-asc")
+
+  (is (= (map vector->map test-data/people-vectors-name-asc)
+         (sort-by-name-asc test-data/unordered-people-maps))
+      "name-asc"))
