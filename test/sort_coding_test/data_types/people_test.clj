@@ -44,11 +44,15 @@
 (deftest empty-fields-tests
   (testing "empty gender field"
     (is (= test-empty-gender-map
-           (vector->map test-empty-gender-vector)))
+           (vector->map test-empty-gender-vector))
+        "vector->map conversion")
     (is (= test-empty-gender-vector
-           (map->vector test-empty-gender-map))))
+           (map->vector test-empty-gender-map))
+        "map->vector conversion"))
   (testing "empty date of birth field"
     (is (= test-empty-date-of-birth-map
-           (vector->map test-empty-date-of-birth-vector)))
+           (vector->map test-empty-date-of-birth-vector))
+        "vector->map conversion")
     (is (= test-empty-date-of-birth-vector
-           (map->vector test-empty-date-of-birth-map)))))
+           (map->vector test-empty-date-of-birth-map))
+        "map->vector conversion")))
