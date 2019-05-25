@@ -41,6 +41,21 @@
 (def test-empty-date-of-birth-map
   (assoc test-map :date-of-birth nil))
 
+(def test-empty-string-field-vector
+  (assoc test-vector 0 ""))
+
+(def test-empty-string-field-map
+  (assoc test-map :last-name ""))
+
+;; Note: This is based on the conversion functions having knowledge of the expected
+;; schema of the input data. I'm assuming mostly clean data. I figured handling empty
+;; fields would be helpful without adding too much complexity.
+
+;; For requested simplicity, I don't cover a number of possible cases here that could
+;; make things break. For example, what happens if I put an actual integer in the :last-name
+;; field of the map? If I want it completely bulletproof, I'd need to start doing some type testing,
+;; throwing errors, or coercion. I've clearly specified in the comments these fields
+;; should be strings. They aren't nil, integers, or anything else.
 (deftest empty-fields-tests
   (testing "empty gender field"
     (is (= test-empty-gender-map
@@ -55,4 +70,11 @@
         "vector->map conversion")
     (is (= test-empty-date-of-birth-vector
            (map->vector test-empty-date-of-birth-map))
+        "map->vector conversion"))
+  (testing "empty string field"
+    (is (= test-empty-string-field-map
+           (vector->map test-empty-string-field-vector))
+        "vector->map conversion")
+    (is (= test-empty-string-field-vector
+           (map->vector test-empty-string-field-map))
         "map->vector conversion")))

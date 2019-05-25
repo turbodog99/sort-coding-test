@@ -25,7 +25,7 @@
 ;;;;  date-of-birth: java.util.Date
 ;;;;  }
 
-;;;; Any missing value should be nil
+;;;; Any missing string value should be the empty string.
 
 (def default-date-format-string
   "M/d/YYYY")
