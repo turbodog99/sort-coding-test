@@ -55,3 +55,49 @@
   :gender :m,
   :favorite-color "brown",
   :date-of-birth #inst "1987-11-13T06:00:00.000-00:00"}])
+
+(def people-vectors-gender-asc-last-name-asc
+  [
+   ["Burns" "Montgomery" "M" "red" "12/12/1881"]
+   ["Cartman" "Eric" "M" "brown" "11/13/1987"]
+   ["Herman" "Mark" "M" "blue" "9/14/1975"]
+   ["Simpson" "Marge" "F" "blue" "3/19/1951"]
+   ["Simpson" "Lisa" "F" "green" "5/9/1982"]
+   ["Simpson" "Homer" "M" "yellow" "5/12/1956"]
+   ["Simpson" "Bart" "M" "orange" "2/3/1983"]])
+
+(def people-vectors-date-of-birth-asc
+  [["Burns" "Montgomery" "M" "red" "12/12/1881"]
+   ["Simpson" "Marge" "F" "blue" "3/19/1951"]
+   ["Simpson" "Homer" "M" "yellow" "5/12/1956"]
+   ["Herman" "Mark" "M" "blue" "9/14/1975"]
+   ["Simpson" "Lisa" "F" "green" "5/9/1982"]
+   ["Simpson" "Bart" "M" "orange" "2/3/1983"]
+   ["Cartman" "Eric" "M" "brown" "11/13/1987"]])
+
+(def people-vectors-last-name-desc
+  [["Simpson" "Homer" "M" "yellow" "5/12/1956"]
+   ["Simpson" "Marge" "F" "blue" "3/19/1951"]
+   ["Simpson" "Bart" "M" "orange" "2/3/1983"]
+   ["Simpson" "Lisa" "F" "green" "5/9/1982"]
+   ["Herman" "Mark" "M" "blue" "9/14/1975"]
+   ["Cartman" "Eric" "M" "brown" "11/13/1987"]
+   ["Burns" "Montgomery" "M" "red" "12/12/1881"]])
+
+(def people-vectors-gender-asc
+  [["Simpson" "Marge" "F" "blue" "3/19/1951"]
+   ["Simpson" "Lisa" "F" "green" "5/9/1982"]
+   ["Herman" "Mark" "M" "blue" "9/14/1975"]
+   ["Burns" "Montgomery" "M" "red" "12/12/1881"]
+   ["Simpson" "Homer" "M" "yellow" "5/12/1956"]
+   ["Simpson" "Bart" "M" "orange" "2/3/1983"]
+   ["Cartman" "Eric" "M" "brown" "11/13/1987"]])
+
+(def people-vectors-by-name-asc
+  [["Burns" "Montgomery" "M" "red" "12/12/1881"]
+   ["Cartman" "Eric" "M" "brown" "11/13/1987"]
+   ["Herman" "Mark" "M" "blue" "9/14/1975"]
+   ["Simpson" "Bart" "M" "orange" "2/3/1983"]
+   ["Simpson" "Homer" "M" "yellow" "5/12/1956"]
+   ["Simpson" "Lisa" "F" "green" "5/9/1982"]
+   ["Simpson" "Marge" "F" "blue" "3/19/1951"]])
