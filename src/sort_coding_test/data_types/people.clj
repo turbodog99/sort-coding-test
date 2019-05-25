@@ -44,7 +44,7 @@
    :first-name first-name
    :gender (when (seq gender) (keyword (clojure.string/lower-case gender)))
    :favorite-color favorite-color
-   :date-of-birth (java.util.Date. date-of-birth)
+   :date-of-birth (when (seq date-of-birth) (java.util.Date. date-of-birth))
    })
 
 ;; TODO: handle nil gender and date

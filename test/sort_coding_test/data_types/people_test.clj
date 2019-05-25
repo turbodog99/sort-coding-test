@@ -46,4 +46,7 @@
     (is (= test-empty-gender-map
            (vector->map test-empty-gender-vector)))
     (is (= test-empty-gender-vector
-           (map->vector test-empty-gender-map)))))
+           (map->vector test-empty-gender-map))))
+  (testing "empty date of birth field"
+    (is (= test-empty-date-of-birth-map
+           (vector->map test-empty-date-of-birth-vector)))))
