@@ -26,7 +26,7 @@
   (doseq [delimiter test-file-generator-delimiters]
     (let [[delimiter-name delimiter-separator] delimiter]
       (with-open [w (io/writer (test-filename delimiter-name))]
-        (doseq [test-person test-data/unordered-people-strings]
+        (doseq [test-person test-data/unordered-people-vectors]
           (.write w (str (clojure.string/join delimiter-separator test-person) "\n")))))))
 
 (def valid-delimiter-name
@@ -50,7 +50,7 @@
   (testing "It works well on a string not taken from a file"
     (doseq [delimiter test-file-generator-delimiters]
       (let [[delimiter-name delimiter-separator] delimiter
-            test-person (first test-data/unordered-people-strings)]
+            test-person (first test-data/unordered-people-vectors)]
         (is (= test-person
                (parse-delimited-line
                 (clojure.string/join delimiter-separator test-person)
@@ -64,7 +64,7 @@
     ;; It should be the same as the data that generated them
     (doseq [delimiter delimiters]
       (let [[delimiter-name delimiter-separator] delimiter]
-        (is (= test-data/unordered-people-strings
+        (is (= test-data/unordered-people-vectors
                (read-all-lines (test-filename delimiter-name) delimiter-name))))))
 
   (testing "Reading an empty file returns an empty list"
