@@ -57,8 +57,7 @@
   :date-of-birth #inst "1987-11-13T06:00:00.000-00:00"}])
 
 (def people-vectors-gender-asc-last-name-asc
-  [
-   ["Burns" "Montgomery" "M" "red" "12/12/1881"]
+  [["Burns" "Montgomery" "M" "red" "12/12/1881"]
    ["Cartman" "Eric" "M" "brown" "11/13/1987"]
    ["Herman" "Mark" "M" "blue" "9/14/1975"]
    ["Simpson" "Marge" "F" "blue" "3/19/1951"]
