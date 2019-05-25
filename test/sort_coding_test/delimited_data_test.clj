@@ -1,6 +1,6 @@
-(ns sort-coding-test.delimited-file-reader-test
+(ns sort-coding-test.delimited-data-test
   (:require [clojure.test :refer :all]
-            [sort-coding-test.delimited-file-reader :refer :all]
+            [sort-coding-test.delimited-data :refer :all]
             [clojure.java.io :as io]
             [clojure.edn :as edn]
             [sort-coding-test.test-data :as test-data]))
