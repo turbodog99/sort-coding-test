@@ -54,5 +54,4 @@
    first-name
    (if gender (clojure.string/upper-case (name gender)) "")
    favorite-color
-   (date->formatted-string date-of-birth)]
-  )
+   (if date-of-birth (date->formatted-string date-of-birth) "")])
