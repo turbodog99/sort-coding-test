@@ -45,7 +45,18 @@
 
 (use-fixtures :once gen-test-files-fixture)
 
-(deftest read-delimited-files
+(deftest parse-delimited-line-test
+  ;; I'm mainly making this test because I might get a line without a newline
+  (testing "It works well on a string not taken from a file"
+    (doseq [delimiter test-file-generator-delimiters]
+      (let [[delimiter-name delimiter-separator] delimiter
+            test-person (first test-data/unordered-people-strings)]
+        (is (= test-person
+               (parse-delimited-line
+                (clojure.string/join delimiter-separator test-person)
+                delimiter-name)))))))
+
+(deftest read-delimited-files-test
   ;; We were told there won't be an unhappy case on the file data itself.
   ;; I would otherwise test how the Clojure CSV library barfs on bad files and
   ;; handle it accordingly.
