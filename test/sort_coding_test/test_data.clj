@@ -93,7 +93,7 @@
    ["Simpson" "Bart" "M" "orange" "2/3/1983"]
    ["Cartman" "Eric" "M" "brown" "11/13/1987"]])
 
-(def people-vectors-by-name-asc
+(def people-vectors-name-asc
   [["Burns" "Montgomery" "M" "red" "12/12/1881"]
    ["Cartman" "Eric" "M" "brown" "11/13/1987"]
    ["Herman" "Mark" "M" "blue" "9/14/1975"]
