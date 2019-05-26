@@ -23,8 +23,10 @@
                         [option-string "test1.csv" option-string "test2.csv"] (cli-options))
                        [:options option-key]))
             (str "accumulates file arguments for " option-string)))
-      (is (get-in (parse-opts ["--start-server"] (cli-options)) [:options :start-server]))
-      (is (not (get-in (parse-opts [] (cli-options)) [:options :start-server])))))
+      (is (get-in (parse-opts ["--start-server"] (cli-options)) [:options :start-server])
+          "detects start server flag")
+      (is (not (get-in (parse-opts [] (cli-options)) [:options :start-server]))
+          "detects start server not passed")))
 
   (testing "Detects file existence errors"
     (is (empty? (:errors (parse-opts ["-c" (io/resource "empty_file.csv")] (cli-options)))))
