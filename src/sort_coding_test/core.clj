@@ -7,19 +7,32 @@
   [options-map option-id new-value]
   (assoc options-map option-id (concat (get options-map option-id) new-value)))
 
+(defn validate-input-file-exists
+  [input]
+  (.exists (io/as-file input)))
+
+(def file-does-not-exist-message
+  "Input file doesn't exist")
+
+(def file-exists-validator
+  [validate-input-file-exists file-does-not-exist-message])
+
 (def cli-options
   [["-c" "--comma-delimited-file FILENAME" "Comma Delimited Filename"
     :parse-fn #(list %)
     :assoc-fn accumulate-filenames
-    :validate [#(.exists (io/as-file %)) "Input file doesn't exist"]]
+;;    :validate file-exists-validator
+    ]
    ["-p" "--pipe-delimited-file FILENAME" "Pipe Delimited Filename"
     :parse-fn #(list %)
     :assoc-fn accumulate-filenames
-    :validate [#(.exists (io/as-file %)) "Input file doesn't exist"]]
+;;    :validate file-exists-validator
+    ]
    ["-s" "--space-delimited-file FILENAME" "Space Delimited Filename"
     :parse-fn #(list %)
     :assoc-fn accumulate-filenames
-    :validate [#(.exists (io/as-file %)) "Input file doesn't exist"]]
+;;    :validate file-exists-validator
+    ]
    [nil "--start-server" "Start REST Server"]])
 
 (defn usage [options-summary]
