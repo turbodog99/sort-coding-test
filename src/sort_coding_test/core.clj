@@ -3,36 +3,37 @@
             [clojure.java.io :as io])
   (:gen-class))
 
+;; Each successive filename option will add to the accumulated filenames for that option
 (defn accumulate-filenames
   [options-map option-id new-value]
   (assoc options-map option-id (concat (get options-map option-id) new-value)))
 
-(defn validate-input-file-exists
-  [input]
-  (.exists (io/as-file input)))
+;; There will always be only one file since this is called right after parsing
+(defn validate-first-input-file-exists
+  [filename-list]
+  (.exists (io/as-file (first filename-list))))
 
 (def file-does-not-exist-message
   "Input file doesn't exist")
 
 (def file-exists-validator
-  [validate-input-file-exists file-does-not-exist-message])
+  [validate-first-input-file-exists file-does-not-exist-message])
 
-(def cli-options
+;; This is a function so file-exists-validator can be overriden when testing
+(defn cli-options
+  []
   [["-c" "--comma-delimited-file FILENAME" "Comma Delimited Filename"
     :parse-fn #(list %)
     :assoc-fn accumulate-filenames
-;;    :validate file-exists-validator
-    ]
+    :validate file-exists-validator]
    ["-p" "--pipe-delimited-file FILENAME" "Pipe Delimited Filename"
     :parse-fn #(list %)
     :assoc-fn accumulate-filenames
-;;    :validate file-exists-validator
-    ]
+    :validate file-exists-validator]
    ["-s" "--space-delimited-file FILENAME" "Space Delimited Filename"
     :parse-fn #(list %)
     :assoc-fn accumulate-filenames
-;;    :validate file-exists-validator
-    ]
+    :validate file-exists-validator]
    [nil "--start-server" "Start REST Server"]])
 
 (defn usage [options-summary]
@@ -56,9 +57,9 @@
         options-summary]
        (clojure.string/join \newline)))
 
-;; TODO: handle the files don't exist errors...and test for them
+;; TODO: now that parsing and validation work, make it do something
 (defn -main
   "CLI entry point for sort program"
   [& args]
-  ;; (println (usage (:summary (parse-opts args cli-options))))
-  (println "Parse opts output: " (parse-opts args cli-options)))
+  ;; (println (usage (:summary (parse-opts args (cli-options)))))
+  (println "Parse opts output: " (parse-opts args (cli-options))))
