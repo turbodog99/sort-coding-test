@@ -46,15 +46,15 @@
 (use-fixtures :once gen-test-files-fixture)
 
 (deftest parse-delimited-line-test
-  ;; I'm mainly making this test because I might get a line without a newline
-  (testing "It works well on a string not taken from a file"
+  (testing "Testing single lines of the different formats"
     (doseq [delimiter test-file-generator-delimiters]
       (let [[delimiter-name delimiter-separator] delimiter
             test-person (first test-data/unordered-people-vectors)]
         (is (= test-person
                (parse-delimited-line
                 (clojure.string/join delimiter-separator test-person)
-                delimiter-name)))))))
+                delimiter-name))
+            (str "Testing delimiter " delimiter-name))))))
 
 (deftest read-delimited-files-test
   ;; We were told there won't be an unhappy case on the file data itself.
@@ -65,7 +65,8 @@
     (doseq [delimiter delimiters]
       (let [[delimiter-name delimiter-separator] delimiter]
         (is (= test-data/unordered-people-vectors
-               (read-all-lines (test-filename delimiter-name) delimiter-name))))))
+               (read-all-lines (test-filename delimiter-name) delimiter-name))
+            (str "Testing delimiter " delimiter-name)))))
 
   (testing "Reading an empty file returns an empty list"
     (is (empty? (read-all-lines empty-filename valid-delimiter-name))))

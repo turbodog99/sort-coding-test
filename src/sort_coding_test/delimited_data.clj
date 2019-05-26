@@ -4,9 +4,9 @@
 
 (def delimiters
   "Maps delimiters from their names to their regular expressions."
-  {"pipe" #"\|"
-   "comma" #","
-   "space" #" "})
+  {"pipe" #"\s*\|\s*"
+   "comma" #"\s*,\s*"
+   "space" #"\s* \s*"})
 
 (def valid-delimiter-names
   (keys delimiters))
@@ -15,7 +15,7 @@
   "Parses a delimited line into a vector of field values"
   [line delimiter-name]
   (if-let [delimiter-re (get delimiters delimiter-name)]
-    (map string/trim (string/split line delimiter-re))
+    (string/split line delimiter-re)
     (throw (AssertionError. (str "Unsupported delimiter name passed. "
                                  "Valid delimiter names are: " valid-delimiter-names)))))
 
