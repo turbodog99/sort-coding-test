@@ -1,7 +1,26 @@
 (ns sort-coding-test.core
   (:require [clojure.tools.cli :refer [parse-opts]]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [sort-coding-test.delimited-data :as delimited-data])
   (:gen-class))
+
+(def delimiters
+  "Options for handling multiple delimiters"
+  [{:name "comma"
+    :option-name :comma-delimited-file
+    :short-opt "-c"
+    :long-opt "--comma-delimited-file FILENAME"
+    :description "comma delimited filename"}
+   {:name "pipe"
+    :option-name :pipe-delimited-file
+    :short-opt "-p"
+    :long-opt "--pipe-delimited-file FILENAME"
+    :description "pipe delimited filename"}
+   {:name "space"
+    :option-name :space-delimited-file
+    :short-opt "-s"
+    :long-opt "--space-delimited-file FILENAME"
+    :description "space delimited filename"}])
 
 ;; Each successive filename option will add to the accumulated filenames for that option
 (defn accumulate-filenames
@@ -19,22 +38,20 @@
 (def file-exists-validator
   [validate-first-input-file-exists file-does-not-exist-message])
 
+(defn delimiter-options
+  []
+  (reduce (fn [acc delimiter]
+            (conj acc [(:short-opt delimiter)
+                       (:long-opt delimiter)
+                       (:description delimiter)
+                       :parse-fn #(list %)
+                       :assoc-fn accumulate-filenames
+                       :validate file-exists-validator])) [] delimiters))
+
 ;; This is a function so file-exists-validator can be overriden when testing
 (defn cli-options
   []
-  [["-c" "--comma-delimited-file FILENAME" "Comma Delimited Filename"
-    :parse-fn #(list %)
-    :assoc-fn accumulate-filenames
-    :validate file-exists-validator]
-   ["-p" "--pipe-delimited-file FILENAME" "Pipe Delimited Filename"
-    :parse-fn #(list %)
-    :assoc-fn accumulate-filenames
-    :validate file-exists-validator]
-   ["-s" "--space-delimited-file FILENAME" "Space Delimited Filename"
-    :parse-fn #(list %)
-    :assoc-fn accumulate-filenames
-    :validate file-exists-validator]
-   [nil "--start-server" "Start REST Server"]])
+  (conj (delimiter-options) [nil "--start-server" "Start REST Server"]))
 
 (defn usage [options-summary]
   (->> ["Prints the 3 requested views of the provided delimited files"
@@ -57,9 +74,41 @@
         options-summary]
        (clojure.string/join \newline)))
 
-;; TODO: now that parsing and validation work, make it do something
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
+(defn load-files-for-delimiter
+  "Loads files for the given delimiter entry from delimiters above and returns a collection of people"
+  [delimiter cli-options]
+  (reduce #(concat %1 (delimited-data/read-all-lines %2 (:name delimiter)))
+          []
+          (get cli-options (:option-name delimiter))))
+
+(defn load-delimited-files
+  "Loads all delimited files specified on the command-line and returns a collection of people"
+  [cli-options]
+  (reduce #(concat %1 (load-files-for-delimiter %2 cli-options)) [] delimiters))
+
+(def people (ref []))
+
 (defn -main
   "CLI entry point for sort program"
   [& args]
-  ;; (println (usage (:summary (parse-opts args (cli-options)))))
-  (println "Parse opts output: " (parse-opts args (cli-options))))
+  (println "Delimiter options" delimiter-options)
+  (let [{:keys [options arguments errors summary]} (parse-opts args (cli-options))]
+    (cond
+      (empty? options)
+      (exit 1 (usage summary))
+      (some #(seq (get options %)) [:comma-delimited-file :pipe-delimited-file :space-delimited-file])
+      (dosync
+       (ref-set people (load-delimited-files options)))
+      :else
+      (exit 1 (usage summary)))
+
+    (if (empty? (get options :start-server))
+      (println "Display people")
+      (println "Start server")))
+
+
+  (println "People: " @people))

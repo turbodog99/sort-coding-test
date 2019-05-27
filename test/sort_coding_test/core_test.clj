@@ -10,7 +10,7 @@
    :space-delimited-file "-s"})
 
 (deftest cli-test
-  (with-redefs [file-exists-validator [(fn [_] true) ""]]
+  (with-redefs [file-exists-validator [(constantly true) ""]]
     (testing "Properly parses arguments"
       (doseq [[option-key option-string] file-options]
         (is (= '("test1.csv")
@@ -29,5 +29,5 @@
           "detects start server not passed")))
 
   (testing "Detects file existence errors"
-    (is (empty? (:errors (parse-opts ["-c" (io/resource "empty_file.csv")] (cli-options)))))
+    (is (empty? (:errors (parse-opts ["-c" (io/resource "test/empty_file.csv")] (cli-options)))))
     (is (= 1 (count (:errors (parse-opts ["-c" "does_not_exist.csv"] (cli-options))))))))

@@ -2,7 +2,6 @@
   (:require [clojure.test :refer :all]
             [sort-coding-test.delimited-data :refer :all]
             [clojure.java.io :as io]
-            [clojure.edn :as edn]
             [sort-coding-test.test-data :as test-data]))
 
 (def test-file-generator-delimiters
@@ -36,7 +35,7 @@
   (test-filename valid-delimiter-name))
 
 (def empty-filename
-  (io/resource "empty_file.csv"))
+  (io/resource "test/empty_file.csv"))
 
 (defn gen-test-files-fixture
   [f]
