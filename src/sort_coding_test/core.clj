@@ -5,7 +5,8 @@
   (:gen-class))
 
 (def delimiters
-  "Options for handling multiple delimiters"
+  "Options for handling multiple delimiters. :option-name, :short-opt, :long-opt, and :description
+  are used by CLI tools for parsing the CLI and displaying usage."
   [{:name "comma"
     :option-name :comma-delimited-file
     :short-opt "-c"
