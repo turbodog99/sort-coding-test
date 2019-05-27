@@ -40,6 +40,25 @@ to choose the output format and sort order with a specified delimiter.
 I chose passing the delimiter type for the loaded files as command-line options because
 delimiter detection is a separate, inexact problem on its own.
 
+In the interest of saving time, I did less testing around the actual loading of files based
+on command-line parameters than I would do in production. I wrote tests to validate that they
+did, in fact, put the filenames in the correct options slots, but I didn't write tests to
+load the files again. I thought the best approach would be to refactor the file generation
+stuff I did for testing the file loading and then creating test files and validating the loaded
+records.
+
+Many of the file-loading tests round trip the same data using different delimiters. On failure,
+these tests will output which delimiter was being tested to keep it from being cryptic.
+
+## Complications
+
+The specification was ambiguous about whether each file would be tested separately or
+whether all three would be loaded at once. This should cover both bases.
+
+It doesn't detect whether the given file actually contains the given delimiters. This goes
+back to the delimiter detection problem, but if the wrong delimiter type is specified,
+it parses as a single field.
+
 ## License
 
 Copyright © 2019 Mark Herman, II

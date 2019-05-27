@@ -80,30 +80,60 @@
   (println msg)
   (System/exit status))
 
-(defn load-files-for-delimiter
-  "Loads files for the given delimiter entry from delimiters above and returns a collection of people"
+(defn files-for-delimiter
+  "Gets filenames from the command-line for the given delimiter"
   [delimiter cli-options]
-  (reduce #(concat %1 (delimited-data/read-all-lines %2 (:name delimiter)))
+  (get cli-options (:option-name delimiter)))
+
+(defn load-people-for-delimiter
+  "Loads the given filenames for the given delimiter name from the available delimiters in the
+  delimited data loader and returns a collection of people"
+  [delimiter-name filenames]
+  (reduce #(concat %1 (map people-data/vector->map (delimited-data/read-all-lines %2 delimiter-name)))
           []
-          (get cli-options (:option-name delimiter))))
+          filenames))
 
 (defn load-delimited-files
   "Loads all delimited files specified on the command-line and returns a collection of people"
   [cli-options]
-  (reduce #(concat %1 (load-files-for-delimiter %2 cli-options)) [] delimiters))
+  (reduce #(concat %1 (load-people-for-delimiter
+                       (:name %2)
+                       (files-for-delimiter %2 cli-options))) [] delimiters))
 
 (def people (ref []))
 
 (defn print-person
-  [person]
-  )
+  [{:keys [last-name first-name gender favorite-color date-of-birth]}]
+  (println (clojure.string/join
+            " | "
+            [last-name first-name (people-data/gender->string gender)
+             favorite-color (people-data/date->formatted-string date-of-birth)])))
+
+(defn print-requested-sorts
+  []
+  (println "Sorted by gender (females before males) then by last name ascending\n")
+  (doseq [person (people-data/sort-by-gender-asc-last-name-asc @people)]
+    (print-person person))
+  (println "\n\n")
+
+  (println "Sorted by birth date, ascending\n")
+  (doseq [person (people-data/sort-by-date-of-birth-asc @people)]
+    (print-person person))
+  (println "\n\n")
+
+  (println "Sorted by last name, descending\n")
+  (doseq [person (people-data/sort-by-last-name-desc @people)]
+    (print-person person))
+  (println "\n\n")
+  (println "People" @people))
 
 (defn -main
   "CLI entry point for sort program"
   [& args]
-  (println "Delimiter options" delimiter-options)
   (let [{:keys [options arguments errors summary]} (parse-opts args (cli-options))]
     (cond
+      (seq errors)
+      (exit 1 (str "Errors found: " errors))
       (empty? options)
       (exit 1 (usage summary))
       (some #(seq (get options %)) [:comma-delimited-file :pipe-delimited-file :space-delimited-file])
@@ -113,8 +143,5 @@
       (exit 1 (usage summary)))
 
     (if (empty? (get options :start-server))
-      (println "Display people")
-      (println "Start server")))
-
-
-  (println "People: " @people))
+      (print-requested-sorts)
+      (println "Start server"))))
