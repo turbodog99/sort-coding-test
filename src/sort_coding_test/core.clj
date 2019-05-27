@@ -2,8 +2,13 @@
   (:require [clojure.tools.cli :refer [parse-opts]]
             [clojure.java.io :as io]
             [sort-coding-test.delimited-data :as delimited-data]
-            [sort-coding-test.data-types.people :as people-data])
+            [sort-coding-test.data-types.people :as people-data]
+            [sort-coding-test.api.records :refer [records-api-handler]]
+            [sort-coding-test.shared-data :refer [people]]
+            [org.httpkit.server :as server])
   (:gen-class))
+
+(def server-port 3000)
 
 (def delimiters
   "Options for handling multiple delimiters. :option-name, :short-opt, :long-opt, and :description
@@ -100,8 +105,6 @@
                        (:name %2)
                        (files-for-delimiter %2 cli-options))) [] delimiters))
 
-(def people (ref []))
-
 (defn print-person
   [{:keys [last-name first-name gender favorite-color date-of-birth]}]
   (println (clojure.string/join
@@ -127,6 +130,10 @@
   (println "\n\n")
   (println "People" @people))
 
+(defn files-provided
+  [options]
+  (some #(seq (get options %)) [:comma-delimited-file :pipe-delimited-file :space-delimited-file]))
+
 (defn -main
   "CLI entry point for sort program"
   [& args]
@@ -136,12 +143,12 @@
       (exit 1 (str "Errors found: " errors))
       (empty? options)
       (exit 1 (usage summary))
-      (some #(seq (get options %)) [:comma-delimited-file :pipe-delimited-file :space-delimited-file])
+      (files-provided options)
       (dosync
-       (ref-set people (load-delimited-files options)))
-      :else
-      (exit 1 (usage summary)))
+       (ref-set people (load-delimited-files options))))
 
-    (if (empty? (get options :start-server))
-      (print-requested-sorts)
-      (println "Start server"))))
+    (if (:start-server options)
+      (do
+        (println "Starting server on port:" server-port)
+        (server/run-server records-api-handler {:port server-port}))
+      (print-requested-sorts))))

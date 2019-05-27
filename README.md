@@ -1,7 +1,7 @@
 # sort-coding-test
 
 Takes delimiter-separated files as input. If started in server mode, starts a REST server
-on port 8080 to allow requesting the loaded records in various sort orders.
+on port 3000 to allow requesting the loaded records in various sort orders.
 
 If not started in server mode, displays the loaded data in the following formats:
 
