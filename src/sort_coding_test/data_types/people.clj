@@ -1,12 +1,7 @@
 (ns sort-coding-test.data-types.people
-  (:require [sort-coding-test.sorting :as sorting]))
+  (:require [sort-coding-test.sorting :as sorting]
+            [schema.core :as s]))
 ;;;; Defines functions for working with people data.
-
-;;;; I avoided using plumatic/schema for simplicity but would consider it in a more
-;;;; complex use case. We were told the data is as expected, and the conversions that
-;;;; need to be done are easy without sending someone off to learn how a
-;;;; coercer works. I would use it if the input was JSON.
-
 
 ;;;; For our purposes, a person in vector form will look like:
 
@@ -15,18 +10,16 @@
 ;;;; where all values are strings. Dates are strings of the form M/D/YYYY.
 ;;;; Gender is a single lowercase string. Any missing value should be an empty string.
 
+;;;; Any missing string value should be the empty string.
 
 ;;;; A person in map form will look as follows:
 
-;;;; {
-;;;;  last-name: String
-;;;;  first-name: String
-;;;;  gender: either :m or :f
-;;;;  favorite-color: String
-;;;;  date-of-birth: java.util.Date
-;;;;  }
-
-;;;; Any missing string value should be the empty string.
+(def Person
+  {:last-name s/Str
+   :first-name s/Str
+   :gender (s/enum :m :f)
+   :favorite-color s/Str
+   :date-of-birth java.util.Date})
 
 (def default-date-format-string
   "M/d/YYYY")
@@ -35,9 +28,24 @@
   (java.text.SimpleDateFormat. default-date-format-string))
 
 (defn date->formatted-string
-  "Converts a java.util.Date to a string using the specified date format"
+  "Converts a java.util.Date to a string using the specified date format.
+  Returns an empty string on a date it can't processs."
   [date]
-  (.format default-date-formatter date))
+  (try
+    (.format default-date-formatter date)
+    (catch Exception e "")))
+
+(defn gender->string
+  "Converts the :m and :f keywords to display strings. Returns empty string on
+  unknown gender."
+  [gender]
+  (cond
+    (= gender :f)
+    "F"
+    (= gender :m)
+    "M"
+    :else
+    ""))
 
 (defn vector->map
   [[last-name first-name gender favorite-color date-of-birth]]

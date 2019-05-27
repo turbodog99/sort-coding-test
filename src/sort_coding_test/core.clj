@@ -1,7 +1,8 @@
 (ns sort-coding-test.core
   (:require [clojure.tools.cli :refer [parse-opts]]
             [clojure.java.io :as io]
-            [sort-coding-test.delimited-data :as delimited-data])
+            [sort-coding-test.delimited-data :as delimited-data]
+            [sort-coding-test.data-types.people :as people-data])
   (:gen-class))
 
 (def delimiters
@@ -92,6 +93,10 @@
   (reduce #(concat %1 (load-files-for-delimiter %2 cli-options)) [] delimiters))
 
 (def people (ref []))
+
+(defn print-person
+  [person]
+  )
 
 (defn -main
   "CLI entry point for sort program"

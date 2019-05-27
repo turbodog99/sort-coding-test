@@ -48,6 +48,16 @@
 (def test-empty-string-field-map
   (assoc test-map :last-name ""))
 
+(deftest test-date->formatted-string
+  (is (= "9/14/1975" (date->formatted-string (java.util.Date. "09/14/1975"))))
+  (is (= "" (date->formatted-string "sdfsdfsd")))
+  (is (= "" (date->formatted-string nil))))
+
+(deftest test-gender->string
+  (is (= "M" (gender->string :m)))
+  (is (= "F" (gender->string :f)))
+  (is (= "" (gender->string :unknown-gender))))
+
 ;; Note: This is based on the conversion functions having knowledge of the expected
 ;; schema of the input data. I'm assuming mostly clean data. I figured handling empty
 ;; fields would be helpful without adding too much complexity.
