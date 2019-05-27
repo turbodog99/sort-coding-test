@@ -10,7 +10,8 @@
                  [ring/ring-core "1.7.1"]
                  [http-kit "2.3.0"]
                  [ring/ring-jetty-adapter "1.7.1"]
-                 [ring/ring-mock "0.4.0"]]
+                 [ring/ring-mock "0.4.0"]
+                 [cheshire "5.8.1"]]
   :main ^:skip-aot sort-coding-test.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

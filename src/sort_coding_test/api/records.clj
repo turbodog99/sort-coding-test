@@ -14,6 +14,9 @@
    :favorite-color s/Str
    :date-of-birth s/Str})
 
+(defn get-people []
+  @people)
+
 (s/defn person-map->display-person-map :- OutputPerson
   "Returns a person map that conforms to the requested JSON"
   [person-map :- people-data/Person]
@@ -29,8 +32,20 @@
            (GET "/gender" []
                 :return [OutputPerson]
                 (ok
-                 (map person-map->display-person-map (people-data/sort-by-gender-asc @people))))
+                 (map person-map->display-person-map
+                      (people-data/sort-by-gender-asc (get-people)))))
 
+           (GET "/birthdate" []
+                :return [OutputPerson]
+                (ok
+                 (map person-map->display-person-map
+                      (people-data/sort-by-date-of-birth-asc (get-people)))))
+
+           (GET "/name" []
+                :return [OutputPerson]
+                (ok
+                 (map person-map->display-person-map
+                      (people-data/sort-by-name-asc (get-people)))))
            ;; (POST "/echo" []
            ;;       :return Pizza
            ;;       :body [pizza Pizza]
