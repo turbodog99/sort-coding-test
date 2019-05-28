@@ -145,6 +145,7 @@
                                                     (mock/body test-comma-delimited-person)))]
               (is (predicates/created? response))
               (is (= test-person-map (first @(get-people))))))))
+
       (let [people-mock (ref [])]
         (with-redefs [get-people (constantly people-mock)]
           (testing "/records with pipe delimiter and proper body data creates record"
@@ -153,6 +154,7 @@
                                                     (mock/body test-pipe-delimited-person)))]
               (is (predicates/created? response))
               (is (= test-person-map (first @(get-people))))))))
+
       (let [people-mock (ref [])]
         (with-redefs [get-people (constantly people-mock)]
           (testing "/records with space delimiter and proper body data creates record"
@@ -161,6 +163,7 @@
                                                     (mock/body test-space-delimited-person)))]
               (is (predicates/created? response))
               (is (= test-person-map (first @(get-people))))))))
+
       (testing "Can add multiple values"
         (let [people-mock (ref [])]
           (with-redefs [get-people (constantly people-mock)]
