@@ -5,7 +5,9 @@
             [schema.core :as s]
             [cheshire.core :as cheshire]
             [sort-coding-test.test-data :as test-data]
-            [sort-coding-test.data-types.people :as people-data]))
+            [sort-coding-test.data-types.people :as people-data]
+            [ring.util.http-predicates :as predicates]
+            [clojure.string :as string]))
 
 (defn parse-body [body]
   (cheshire/parse-string (slurp body) true))
@@ -23,6 +25,15 @@
    :gender "M"
    :favorite-color "test_favorite_color"
    :date-of-birth "9/14/1975"})
+
+(def test-comma-delimited-person
+  (string/join ", " (vals test-output-person-map)))
+
+(def test-pipe-delimited-person
+  (string/join " | " (vals test-output-person-map)))
+
+(def test-space-delimited-person
+  (string/join " " (vals test-output-person-map)))
 
 (defn string->gender
   [gender]
@@ -70,38 +81,101 @@
     ;;   (is (= (:status response) 200))
     ;;   (is (= (:result body) 3)))))
 
-    (with-redefs [get-people (constantly test-data/unordered-people-maps)]
-      (testing "Test GET request to /records/gender returns gender ascending records"
-        (let [response (records-api-handler (mock/request :get "/records/gender"))
-              body (parse-body (:body response))]
-          (is (= 200 (:status response)))
-          (is (= (map people-data/vector->map test-data/people-vectors-gender-asc)
-                 (map display-person-map->person-map body)))))
+    (testing "GET requests"
+      (with-redefs [get-people (constantly (ref test-data/unordered-people-maps))]
+        (testing "/records/gender returns gender ascending records"
+          (let [response (records-api-handler (mock/request :get "/records/gender"))
+                body (parse-body (:body response))]
+            (is (predicates/ok? response))
+            (is (= (map people-data/vector->map test-data/people-vectors-gender-asc)
+                   (map display-person-map->person-map body)))))
 
-      (testing "Test GET request to /records/birthdate returns birthdate ascending records"
-        (let [response (records-api-handler (mock/request :get "/records/birthdate"))
-              body (parse-body (:body response))]
-          (is (= 200 (:status response)))
-          (is (= (map people-data/vector->map test-data/people-vectors-date-of-birth-asc)
-                 (map display-person-map->person-map body)))))
+        (testing "/records/birthdate returns birthdate ascending records"
+          (let [response (records-api-handler (mock/request :get "/records/birthdate"))
+                body (parse-body (:body response))]
+            (is (predicates/ok? response))
+            (is (= (map people-data/vector->map test-data/people-vectors-date-of-birth-asc)
+                   (map display-person-map->person-map body)))))
 
-      (testing "Test GET request to /records/name returns name ascending records"
-        (let [response (records-api-handler (mock/request :get "/records/name"))
-              body (parse-body (:body response))]
-          (is (= 200 (:status response)))
-          (is (= (map people-data/vector->map test-data/people-vectors-name-asc)
-                 (map display-person-map->person-map body)))))))
+        (testing "/records/name returns name ascending records"
+          (let [response (records-api-handler (mock/request :get "/records/name"))
+                body (parse-body (:body response))]
+            (is (predicates/ok? response))
+            (is (= (map people-data/vector->map test-data/people-vectors-name-asc)
+                   (map display-person-map->person-map body))))))
 
+      (with-redefs [get-people (constantly (ref []))]
+        (testing "/records/gender with no records returns empty collection"
+          (let [response (records-api-handler (mock/request :get "/records/gender"))
+                body (parse-body (:body response))]
+            (is (predicates/ok? response))
+            (is (= [] body))))
 
-;; (deftest your-handler-test
-;;   (is (= (your-handler (mock/request :get "/doc/10"))
-;;          {:status  200
-;;           :headers {"content-type" "text/plain"}
-;;           :body    "Your expected result"})))
+        (testing "/records/birthdate with no records returns empty collection"
+          (let [response (records-api-handler (mock/request :get "/records/birthdate"))
+                body (parse-body (:body response))]
+            (is (predicates/ok? response))
+            (is (= [] body))))
 
-;; (deftest your-json-handler-test
-;;   (is (= (your-handler (-> (mock/request :post "/api/endpoint")
-;;                            (mock/json-body {:foo "bar"})))
-;;          {:status  201
-;;           :headers {"content-type" "application/json"}
-;;           :body    {:key "your expected result"}})))
+        (testing "/records/name with no records returns empty collection"
+          (let [response (records-api-handler (mock/request :get "/records/name"))
+                body (parse-body (:body response))]
+            (is (predicates/ok? response))
+            (is (= [] body))))))
+
+    (testing "POST requests"
+      (let [people-mock (ref [])]
+        (with-redefs [get-people (constantly people-mock)]
+          (testing "/records with no delimiter query param returns bad-request"
+            (let [response (records-api-handler (-> (mock/request :post "/records")
+                                                    (mock/content-type "text/plain")
+                                                    (mock/body "sdfsd")))]
+              (is (predicates/bad-request? response))))
+          (testing "/records with unsupported delimiter returns bad-request"
+            (let [response (records-api-handler (-> (mock/request :post "/records?delimiter=unsupported")
+                                                    (mock/content-type "text/plain")
+                                                    (mock/body "sdfsd")))]
+              (is (predicates/bad-request? response))))
+          (testing "/records with no body returns bad-request"
+            (let [response (records-api-handler (-> (mock/request :post "/records?delimiter=comma")
+                                                    (mock/content-type "text/plain")))]
+              (is (predicates/bad-request? response))))))
+
+      ;; Since I'm reusing the same test person on each of these, I'm resetting the people ref
+      ;; to be empty because otherwise it might give false passes based on previous runs.
+      (let [people-mock (ref [])]
+        (with-redefs [get-people (constantly people-mock)]
+          (testing "/records with comma delimiter and proper body data creates record"
+            (let [response (records-api-handler (-> (mock/request :post "/records?delimiter=comma")
+                                                    (mock/content-type "text/plain")
+                                                    (mock/body test-comma-delimited-person)))]
+              (is (predicates/created? response))
+              (is (= test-person-map (first @(get-people))))))))
+      (let [people-mock (ref [])]
+        (with-redefs [get-people (constantly people-mock)]
+          (testing "/records with pipe delimiter and proper body data creates record"
+            (let [response (records-api-handler (-> (mock/request :post "/records?delimiter=pipe")
+                                                    (mock/content-type "text/plain")
+                                                    (mock/body test-pipe-delimited-person)))]
+              (is (predicates/created? response))
+              (is (= test-person-map (first @(get-people))))))))
+      (let [people-mock (ref [])]
+        (with-redefs [get-people (constantly people-mock)]
+          (testing "/records with space delimiter and proper body data creates record"
+            (let [response (records-api-handler (-> (mock/request :post "/records?delimiter=space")
+                                                    (mock/content-type "text/plain")
+                                                    (mock/body test-space-delimited-person)))]
+              (is (predicates/created? response))
+              (is (= test-person-map (first @(get-people))))))))
+      (testing "Can add multiple values"
+        (let [people-mock (ref [])]
+          (with-redefs [get-people (constantly people-mock)]
+            (testing "/records with space delimiter and proper body data creates record"
+              (records-api-handler (-> (mock/request :post "/records?delimiter=space")
+                                                      (mock/content-type "text/plain")
+                                                      (mock/body test-space-delimited-person)))
+              (records-api-handler (-> (mock/request :post "/records?delimiter=space")
+                                                      (mock/content-type "text/plain")
+                                                      (mock/body test-space-delimited-person)))
+              (is (= test-person-map (first @(get-people))))
+              (is (= test-person-map (second @(get-people))))))))))

@@ -11,7 +11,8 @@
                  [http-kit "2.3.0"]
                  [ring/ring-jetty-adapter "1.7.1"]
                  [ring/ring-mock "0.4.0"]
-                 [cheshire "5.8.1"]]
+                 [cheshire "5.8.1"]
+                 [metosin/ring-http-response "0.9.1"]]
   :main ^:skip-aot sort-coding-test.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

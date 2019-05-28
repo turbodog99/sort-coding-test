@@ -9,7 +9,7 @@
    "space" #"\s* \s*"})
 
 (def valid-delimiter-names
-  (keys delimiters))
+  (set (keys delimiters)))
 
 (defn parse-delimited-line
   "Parses a delimited line into a vector of field values"

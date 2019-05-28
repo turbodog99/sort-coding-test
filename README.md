@@ -22,6 +22,18 @@ If not started in server mode, displays the loaded data in the following formats
 
 File options can be specified multiple times to load multiple files.
 
+## REST Server
+
+The REST server always runs on port 3000
+
+* POST /records - Post a single data line in any of the 3 formats supported by your existing code
+* GET /records/gender - returns records sorted by gender
+* GET /records/birthdate - returns records sorted by birthdate
+* GET /records/name - returns records sorted by name
+
+The POST route requires a delimiter=delimiter_name parameter where delimeter_name is one of
+comma, pipe, or space.
+
 ## Examples
 
 For file display:
