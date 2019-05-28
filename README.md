@@ -11,7 +11,7 @@ If not started in server mode, displays the loaded data in the following formats
 
 ## Usage
 
-    `$ lein run [options]`
+    $ lein run [options]
 
 ## Options
 
