@@ -75,12 +75,6 @@
            (person-map->display-person-map test-person-map)))))
 
   (deftest server-test
-    ;; (testing "Test GET request to /hello?name={a-name} returns expected response"
-    ;; (let [response (app (-> (mock/request :get  "/api/plus?x=1&y=2")))
-    ;;       body     (parse-body (:body response))]
-    ;;   (is (= (:status response) 200))
-    ;;   (is (= (:result body) 3)))))
-
     (testing "GET requests"
       (with-redefs [get-people (constantly (ref test-data/unordered-people-maps))]
         (testing "/records/gender returns gender ascending records"
