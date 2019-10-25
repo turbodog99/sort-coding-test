@@ -15,4 +15,6 @@
                  [metosin/ring-http-response "0.9.1"]]
   :main ^:skip-aot sort-coding-test.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+  :managed-dependencies [[org.clojure/core.rrb-vector "0.0.13"]
+                         [org.flatland/ordered "1.5.7"]])
