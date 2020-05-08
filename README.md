@@ -6,7 +6,7 @@ on port 3000 to allow requesting the loaded records in various sort orders.
 If not started in server mode, displays the loaded data in the following formats:
 
 * sorted by gender ascencing then by last name ascending
-* sorted by birth data ascending
+* sorted by birth date ascending
 * sorted by last name descending
 
 ## Usage
